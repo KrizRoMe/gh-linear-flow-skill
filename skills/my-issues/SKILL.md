@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en Linear.
 
-0. Config: lee y sigue el procedimiento en `${CLAUDE_SKILL_DIR}/../../resources/config.md`. Claves requeridas para este skill: `linearUserId`, `linearTeamId`, `linearTeamName`, `linearTeamUrl`.
+0. Config: localiza y sigue el procedimiento en `resources/config.md` (raíz del proyecto, dos niveles arriba de este SKILL.md; si tu entorno define `${CLAUDE_SKILL_DIR}`, es `${CLAUDE_SKILL_DIR}/../../resources/config.md`). Claves requeridas para este skill: `linearUserId`, `linearTeamId`, `linearTeamName`, `linearTeamUrl`.
 
 1. Usa la tool MCP `list_issues` con estos filtros por default (no me preguntes por esto):
    - assignee: `linearUserId` (de la config)

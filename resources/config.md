@@ -35,7 +35,7 @@ Sigue esto cada vez que un skill te remita a este archivo:
    - `linearUserId`: usa la tool MCP `list_users` con el `linearEmail` dado. Si no hay coincidencia exacta, muéstrame las opciones encontradas y pregunta cuál es.
    - `linearTeamId` / `linearTeamUrl`: usa `list_teams` para encontrar el equipo por nombre/key, y `get_team` para obtener su url real. Si no hay coincidencia exacta, muéstrame las opciones y pregunta.
    - `githubRepos`: no requiere resolución, solo normaliza al formato `org/repo`.
-5. Actualiza el archivo con Write, combinando las claves nuevas con las que ya existían — nunca borres claves que otro skill guardó antes. El directorio `~/.claude/` ya debería existir.
+5. Actualiza el archivo con Write, combinando las claves nuevas con las que ya existían — nunca borres claves que otro skill guardó antes. Si el directorio `~/.claude/` no existe (agentes distintos a Claude Code no lo crean automáticamente), créalo antes de escribir.
 6. Continúa con la tarea del skill usando los valores ya resueltos.
 
 Si en cualquier momento te pido explícitamente reconfigurar algo (ej. "cambia mi email de Linear", "agrega este repo a githubRepos"), actualiza solo esa clave sin volver a pedir ni reconfirmar las demás.

@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en Linear.
 
-0. Config: lee y sigue el procedimiento en `${CLAUDE_SKILL_DIR}/../../resources/config.md`. Claves requeridas para este skill: `linearEmail`, `linearUserId`, `linearTeamId`, `baseBranch`, `contentLanguage`.
+0. Config: localiza y sigue el procedimiento en `resources/config.md` (raíz del proyecto, dos niveles arriba de este SKILL.md; si tu entorno define `${CLAUDE_SKILL_DIR}`, es `${CLAUDE_SKILL_DIR}/../../resources/config.md`). Claves requeridas para este skill: `linearEmail`, `linearUserId`, `linearTeamId`, `baseBranch`, `contentLanguage`.
 
 1. Usa la tool MCP de Linear `list_issue_statuses` para el `linearTeamId` de la config. Busca el estado cuyo nombre contenga "progress" (sin distinguir mayúsculas). Extrae su id como <inProgressStateId>.
 

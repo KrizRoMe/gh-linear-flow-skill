@@ -9,9 +9,19 @@ Suite de skills de Claude Code para el flujo GitHub (`gh`) + Linear: crear tarea
 
 ## Instalación
 
+### Opción A: con `skills` CLI (recomendada)
+
+Instala las 7 skills de la suite con un solo comando, sin clonar el repo:
+
 ```bash
-git clone git@github.com:KrizRoMe/gh-linear-flow.git
-cd gh-linear-flow
+npx skills add KrizRoMe/gh-linear-flow-skill --skill '*'
+```
+
+### Opción B: clonando el repo
+
+```bash
+git clone git@github.com:KrizRoMe/gh-linear-flow-skill.git
+cd gh-linear-flow-skill
 ./install.sh
 ```
 
@@ -35,12 +45,18 @@ Ningún dato personal está hardcodeado. La primera vez que uses cualquiera de e
 
 Todos tienen `disable-model-invocation: true`: Claude nunca los dispara solo, siempre los invocas tú explícitamente con `/nombre`.
 
-## Publicar en skills.sh (opcional)
+## Publicar en skills.sh
 
-Cada skill se puede publicar por separado:
+El repo ya es instalable vía [skills.sh](https://www.skills.sh) apenas es público en GitHub, no requiere un paso de publicación aparte. Cualquiera puede instalar toda la suite con:
 
 ```bash
-npm install -g @localskills/cli
-localskills login
-localskills publish --name tu-usuario/linear-task
+npx skills add KrizRoMe/gh-linear-flow-skill --skill '*'
 ```
+
+O una skill puntual:
+
+```bash
+npx skills add KrizRoMe/gh-linear-flow-skill --skill autocommit
+```
+
+Para aparecer en el buscador/listado del sitio (`npx skills find`), el proceso de indexación no está documentado oficialmente todavía (ver [vercel-labs/skills#880](https://github.com/vercel-labs/skills/issues/880)).

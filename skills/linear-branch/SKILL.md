@@ -7,7 +7,7 @@ argument-hint: "[identificador]"
 
 Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en Linear.
 
-0. Config: lee y sigue el procedimiento en `${CLAUDE_SKILL_DIR}/../../resources/config.md`. Clave requerida para este skill: `baseBranch`.
+0. Config: localiza y sigue el procedimiento en `resources/config.md` (raíz del proyecto, dos niveles arriba de este SKILL.md; si tu entorno define `${CLAUDE_SKILL_DIR}`, es `${CLAUDE_SKILL_DIR}/../../resources/config.md`). Clave requerida para este skill: `baseBranch`.
 
 1. Pregúntame cuál es el identificador del issue de Linear (ej. RC-456), a menos que ya lo haya dado como argumento ($ARGUMENTS) — en ese caso úsalo directo y no preguntes.
 

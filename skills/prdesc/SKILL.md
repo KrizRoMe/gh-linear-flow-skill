@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 Ejecuta este flujo con cuidado.
 
-0. Config: lee y sigue el procedimiento en `${CLAUDE_SKILL_DIR}/../../resources/config.md`. Clave requerida para este skill: `contentLanguage`.
+0. Config: localiza y sigue el procedimiento en `resources/config.md` (raíz del proyecto, dos niveles arriba de este SKILL.md; si tu entorno define `${CLAUDE_SKILL_DIR}`, es `${CLAUDE_SKILL_DIR}/../../resources/config.md`). Clave requerida para este skill: `contentLanguage`.
 
 1. Obtén la rama actual: `git branch --show-current`
 
