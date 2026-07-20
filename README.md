@@ -43,15 +43,15 @@ Si no especificas nada en ningún lado, cada agente cae a su propio default: el 
 
 ## Skills incluidos
 
-| Skill | Qué hace |
-|---|---|
-| `/linear-task` | Crea un issue nuevo en Linear + la rama de git correspondiente |
-| `/linear-branch` | Crea la rama de git para un issue de Linear que ya existe |
-| `/autocommit` | Genera y ejecuta un commit (conventional commits) a partir del diff en staged |
-| `/pr` | Genera la descripción del PR y lo crea en GitHub con `gh` |
-| `/prdesc` | Genera solo la descripción del PR, sin crearlo (preview) |
-| `/pr-notify` | Busca los PRs relacionados al issue de la rama actual y arma un mensaje para notificar |
-| `/my-issues` | Lista tus issues pendientes en Linear |
+| Skill | Qué hace | Argumentos |
+|---|---|---|
+| `/linear-task` | Crea un issue nuevo en Linear + la rama de git correspondiente | Ninguno |
+| `/linear-branch` | Crea la rama de git para un issue de Linear que ya existe | `[identificador]` — si no lo das (ej. `/linear-branch RC-456`), te lo pregunta |
+| `/autocommit` | Genera y ejecuta un commit (conventional commits) a partir del diff en staged | Ninguno |
+| `/pr` | Genera la descripción del PR y lo crea en GitHub con `gh` | Ninguno |
+| `/prdesc` | Genera solo la descripción del PR, sin crearlo (preview) | Ninguno |
+| `/pr-notify` | Busca los PRs relacionados al issue de la rama actual y arma un mensaje para notificar | `[identificador-opcional]` — si no lo das, lo detecta del nombre de la rama actual |
+| `/my-issues` | Lista tus issues pendientes en Linear | Ninguno |
 
 Todos tienen `disable-model-invocation: true`: Claude nunca los dispara solo, siempre los invocas tú explícitamente con `/nombre`.
 
