@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 Ejecuta este flujo con cuidado.
 
-0. Config: lee y sigue el procedimiento en `${CLAUDE_SKILL_DIR}/../../resources/config.md`. Clave requerida para este skill: `baseBranch`.
+0. Config: lee y sigue el procedimiento en `${CLAUDE_SKILL_DIR}/../../resources/config.md`. Claves requeridas para este skill: `baseBranch`, `contentLanguage`.
 
 1. Obtén la rama actual: `git branch --show-current` → <ramaActual>.
 
@@ -33,7 +33,7 @@ Ejecuta este flujo con cuidado.
    Cruza ambos para producir una descripción precisa y completa.
 
 Reglas:
-- Escribe TODO el contenido en inglés (títulos, descripciones, todo)
+- Escribe TODO el contenido en `contentLanguage` (de la config; default inglés) — títulos, descripciones, todo
 - Respeta exactamente la estructura del template
 - Llena todas las secciones con el contexto de Linear + los cambios reales
 - No inventes features o tests que no existen

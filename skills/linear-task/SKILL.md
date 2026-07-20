@@ -6,36 +6,28 @@ disable-model-invocation: true
 
 Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en Linear.
 
-0. Config: lee y sigue el procedimiento en `${CLAUDE_SKILL_DIR}/../../resources/config.md`. Claves requeridas para este skill: `linearEmail`, `linearUserId`, `linearTeamId`, `baseBranch`.
+0. Config: lee y sigue el procedimiento en `${CLAUDE_SKILL_DIR}/../../resources/config.md`. Claves requeridas para este skill: `linearEmail`, `linearUserId`, `linearTeamId`, `baseBranch`, `contentLanguage`.
 
 1. Usa la tool MCP de Linear `list_issue_statuses` para el `linearTeamId` de la config. Busca el estado cuyo nombre contenga "progress" (sin distinguir mayúsculas). Extrae su id como <inProgressStateId>.
 
-2. Pregúntame el título del issue en español (obligatorio). No pidas nada más.
+2. Pregúntame el título del issue (obligatorio). No pidas nada más.
 
-3. A partir del título (más cualquier contexto extra que yo dé voluntariamente), genera la descripción del issue en español como una User Story completa, usando exactamente estas secciones markdown `##`, en este orden:
+3. A partir del título (más cualquier contexto extra que yo dé voluntariamente), genera la descripción del issue en el idioma configurado en `contentLanguage` (de la config), como una User Story completa, usando exactamente estas secciones markdown `##`, en este orden, traducidas al idioma configurado:
 
-   ## Descripción
-   Párrafo explicando el propósito y contexto de la tarea.
+   - Inglés (default): `## Description`, `## Scope`, `## Acceptance Criteria`, `## Business Rules`, `## Out of Scope`, `## Dependencies`, `## Mockups/Figma`
+   - Español: `## Descripción`, `## Alcance (Scope)`, `## Criterios de aceptación`, `## Reglas de negocio`, `## Fuera de alcance`, `## Dependencias`, `## Mockups/Figma`
+   - Cualquier otro idioma configurado: traduce estos mismos headers manteniendo el orden y el sentido.
 
-   ## Alcance (Scope)
-   Qué incluye esta tarea, en bullets.
+   Contenido de cada sección (redactado también en `contentLanguage`):
+   - Description/Descripción: párrafo explicando el propósito y contexto de la tarea.
+   - Scope/Alcance: bullets con lo que incluye la tarea.
+   - Acceptance Criteria/Criterios de aceptación: checklist `- [ ] criterio` con condiciones verificables.
+   - Business Rules/Reglas de negocio: bullets con reglas de negocio relevantes inferidas del título/contexto. Si no aplica ninguna, escribe "N/A".
+   - Out of Scope/Fuera de alcance: bullets con lo que explícitamente NO cubre esta tarea. Si no es evidente, escribe "N/A".
+   - Dependencies/Dependencias: bullets con dependencias identificadas (otros issues, equipos, servicios). Si no hay ninguna evidente, escribe "None identified"/"Ninguna identificada" (en el idioma configurado).
+   - Mockups/Figma: escribe "N/A — add if applicable"/"N/A — agregar si aplica" (en el idioma configurado) salvo que yo haya dado un link o contexto visual explícito.
 
-   ## Criterios de aceptación
-   Checklist en formato `- [ ] criterio` con condiciones verificables.
-
-   ## Reglas de negocio
-   Bullets con reglas de negocio relevantes inferidas del título/contexto. Si no aplica ninguna, escribe "N/A".
-
-   ## Fuera de alcance
-   Bullets con lo que explícitamente NO cubre esta tarea. Si no es evidente, escribe "N/A".
-
-   ## Dependencias
-   Bullets con dependencias identificadas (otros issues, equipos, servicios). Si no hay ninguna evidente, escribe "Ninguna identificada".
-
-   ## Mockups/Figma
-   Escribe "N/A — agregar si aplica" salvo que yo haya dado un link o contexto visual explícito.
-
-   No inventes reglas de negocio, dependencias ni links de mockups que no estén fundamentados en el título o contexto dado — usa los fallbacks "N/A" de arriba en su lugar. No me pidas la descripción a menos que yo la haya dado explícitamente.
+   No inventes reglas de negocio, dependencias ni links de mockups que no estén fundamentados en el título o contexto dado — usa los fallbacks de N/A de arriba en su lugar. No me pidas la descripción a menos que yo la haya dado explícitamente.
 
 4. Usa la tool MCP de Linear `create_issue` con:
    - title: <título dado>

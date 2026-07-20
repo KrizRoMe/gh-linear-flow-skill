@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 Ejecuta este flujo con cuidado.
 
+0. Config: lee y sigue el procedimiento en `${CLAUDE_SKILL_DIR}/../../resources/config.md`. Clave requerida para este skill: `contentLanguage`.
+
 1. Obtén la rama actual: `git branch --show-current`
 
 2. Extrae el identificador de Linear del nombre de la rama.
@@ -27,7 +29,7 @@ Ejecuta este flujo con cuidado.
 7. Genera una descripción de PR profesional siguiendo EXACTAMENTE la estructura del template detectado, cruzando el contexto de Linear con los cambios reales.
 
 Reglas:
-- Escribe TODO el contenido en inglés
+- Escribe TODO el contenido en `contentLanguage` (de la config; default inglés)
 - Respeta exactamente la estructura del template
 - Llena todas las secciones con el contexto de Linear + los cambios reales
 - No inventes features o tests que no existen

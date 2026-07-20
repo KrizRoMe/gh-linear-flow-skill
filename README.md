@@ -32,7 +32,6 @@ Ningún dato personal está hardcodeado. La primera vez que uses cualquiera de e
 | `/prdesc` | Genera solo la descripción del PR, sin crearlo (preview) |
 | `/pr-notify` | Busca los PRs relacionados al issue de la rama actual y arma un mensaje para notificar |
 | `/my-issues` | Lista tus issues pendientes en Linear |
-| `/daily-resume` | Resume lo que trabajaste hoy para tu daily standup |
 
 Todos tienen `disable-model-invocation: true`: Claude nunca los dispara solo, siempre los invocas tú explícitamente con `/nombre`.
 
