@@ -12,7 +12,30 @@ Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en L
 
 2. Pregúntame el título del issue en español (obligatorio). No pidas nada más.
 
-3. A partir del título, genera una descripción concisa y profesional en español que explique el propósito y contexto de la tarea. No me pidas la descripción a menos que yo la haya dado explícitamente.
+3. A partir del título (más cualquier contexto extra que yo dé voluntariamente), genera la descripción del issue en español como una User Story completa, usando exactamente estas secciones markdown `##`, en este orden:
+
+   ## Descripción
+   Párrafo explicando el propósito y contexto de la tarea.
+
+   ## Alcance (Scope)
+   Qué incluye esta tarea, en bullets.
+
+   ## Criterios de aceptación
+   Checklist en formato `- [ ] criterio` con condiciones verificables.
+
+   ## Reglas de negocio
+   Bullets con reglas de negocio relevantes inferidas del título/contexto. Si no aplica ninguna, escribe "N/A".
+
+   ## Fuera de alcance
+   Bullets con lo que explícitamente NO cubre esta tarea. Si no es evidente, escribe "N/A".
+
+   ## Dependencias
+   Bullets con dependencias identificadas (otros issues, equipos, servicios). Si no hay ninguna evidente, escribe "Ninguna identificada".
+
+   ## Mockups/Figma
+   Escribe "N/A — agregar si aplica" salvo que yo haya dado un link o contexto visual explícito.
+
+   No inventes reglas de negocio, dependencias ni links de mockups que no estén fundamentados en el título o contexto dado — usa los fallbacks "N/A" de arriba en su lugar. No me pidas la descripción a menos que yo la haya dado explícitamente.
 
 4. Usa la tool MCP de Linear `create_issue` con:
    - title: <título dado>
