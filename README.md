@@ -31,6 +31,16 @@ Esto crea un symlink por cada skill en `~/.claude/skills/`. Abre una sesión nue
 
 Ningún dato personal está hardcodeado. La primera vez que uses cualquiera de estos skills y le falte un dato (tu correo de Linear, el equipo, los repos de GitHub, la rama base), te preguntará una sola vez y lo guardará en `~/.claude/gh-linear-flow.config.json` para las próximas veces. Ver [resources/config.md](resources/config.md) para el esquema completo y cómo reconfigurar valores puntuales sin repetir todo el bootstrap.
 
+## Modelo
+
+Estos skills no fijan un modelo — usan el que ya esté activo en tu agente. Eso se configura por fuera del skill, en la herramienta que uses:
+
+- **Claude Code**: `/model` en la sesión, o `model:` en el frontmatter de un skill puntual si lo quieres fijar para ese comando.
+- **OpenCode**: `"model": "provider_id/model_id"` en `opencode.json`, o `/models` interactivo.
+- **Codex CLI / otros**: su propia config, no leen el frontmatter de `SKILL.md`.
+
+Si no especificas nada en ningún lado, cada agente cae a su propio default: el modelo de sesión activo (o el último usado), no un modelo fijo de esta suite.
+
 ## Skills incluidos
 
 | Skill | Qué hace |
