@@ -1,6 +1,6 @@
 # gh-linear-flow
 
-Suite de skills de Claude Code para el flujo GitHub (`gh`) + Linear: crear tareas, ramas, commits, PRs y notificaciones, sin repetir instrucciones ni datos personales en cada máquina.
+Suite de skills para el flujo GitHub (`gh`) + Linear: crear tareas, ramas, commits, PRs y notificaciones, sin repetir instrucciones ni datos personales en cada máquina.
 
 ## Prerrequisitos
 
