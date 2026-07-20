@@ -54,19 +54,3 @@ Si no especificas nada en ningún lado, cada agente cae a su propio default: el 
 | `/my-issues` | Lista tus issues pendientes en Linear | Ninguno |
 
 Todos tienen `disable-model-invocation: true`: Claude nunca los dispara solo, siempre los invocas tú explícitamente con `/nombre`.
-
-## Publicar en skills.sh
-
-El repo ya es instalable vía [skills.sh](https://www.skills.sh) apenas es público en GitHub, no requiere un paso de publicación aparte. Cualquiera puede instalar toda la suite con:
-
-```bash
-npx skills add KrizRoMe/gh-linear-flow-skill --skill '*'
-```
-
-O una skill puntual:
-
-```bash
-npx skills add KrizRoMe/gh-linear-flow-skill --skill autocommit
-```
-
-Para aparecer en el buscador/listado del sitio (`npx skills find`), el proceso de indexación no está documentado oficialmente todavía (ver [vercel-labs/skills#880](https://github.com/vercel-labs/skills/issues/880)).
