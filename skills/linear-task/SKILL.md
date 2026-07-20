@@ -2,6 +2,7 @@
 name: linear-task
 description: Crea un issue nuevo en Linear asignado a ti, en estado "In Progress", y crea la rama de git correspondiente desde la rama base. Úsalo al empezar una tarea nueva que todavía no existe en Linear.
 disable-model-invocation: true
+argument-hint: "[titulo-opcional]"
 ---
 
 Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en Linear.
@@ -10,7 +11,7 @@ Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en L
 
 1. Usa la tool MCP de Linear `list_issue_statuses` para el `linearTeamId` de la config. Busca el estado cuyo nombre contenga "progress" (sin distinguir mayúsculas). Extrae su id como <inProgressStateId>.
 
-2. Pregúntame el título del issue (obligatorio). No pidas nada más.
+2. Título del issue: si vino como argumento ($ARGUMENTS), úsalo directo y no preguntes. Si no, pregúntamelo (obligatorio) — no pidas nada más.
 
 3. A partir del título (más cualquier contexto extra que yo dé voluntariamente), genera la descripción del issue en el idioma configurado en `contentLanguage` (de la config), como una User Story completa, usando exactamente estas secciones markdown `##`, en este orden, traducidas al idioma configurado:
 

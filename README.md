@@ -45,7 +45,7 @@ Si no especificas nada en ningún lado, cada agente cae a su propio default: el 
 
 | Skill | Qué hace | Argumentos |
 |---|---|---|
-| `/linear-task` | Crea un issue nuevo en Linear + la rama de git correspondiente | Ninguno |
+| `/linear-task` | Crea un issue nuevo en Linear + la rama de git correspondiente | `[titulo-opcional]` — si no lo das (ej. `/linear-task Arreglar bug de login`), te lo pregunta |
 | `/linear-branch` | Crea la rama de git para un issue de Linear que ya existe | `[identificador]` — si no lo das (ej. `/linear-branch RC-456`), te lo pregunta |
 | `/autocommit` | Genera y ejecuta un commit (conventional commits) a partir del diff en staged | Ninguno |
 | `/pr` | Genera la descripción del PR y lo crea en GitHub con `gh` | Ninguno |
