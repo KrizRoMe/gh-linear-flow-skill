@@ -64,4 +64,4 @@ Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en L
    - Issue de Linear: <identifier> — <title>
    - URL: <url>
    - Rama: <branchName>
-   - Siguientes pasos: implementa los cambios, luego corre /autocommit y /prdesc
+   - Siguientes pasos: implementa los cambios, luego corre /autocommit y /prdesc (o directo /pr si ya quieres crear el PR)
