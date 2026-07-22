@@ -15,9 +15,9 @@ Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en L
    a. Si vino como argumento ($ARGUMENTS), úsalo directo y no preguntes.
    b. Si NO vino argumento, intenta autogenerarlo a partir del diff de git del working tree (prioridad: staged → unstaged → untracked). Para ello:
       - Recolecta contexto en una sola pasada: `git status --short` + `git diff --staged` + `git diff` (limita cada diff a ~400 líneas con `| head -400` si hace falta).
-      - Analiza los cambios y genera un título corto (máx. ~80 caracteres) estilo conventional commit pero legible como título de Linear (sin paréntesis tipo `(scope)` si quedan redundantes). Formato preferido: `<tipo>: <descripción breve y específica>`.
-      - Tipos válidos: feat, fix, refactor, docs, perf, test, build, ci, chore.
-      - Reglas: una sola línea, minúsculas, sin markdown, sin comillas, sin emojis, sin punto final, imperativo/infinitivo.
+      - Analiza los cambios y genera un título corto (máx. ~80 caracteres), específico y legible como título de Linear.
+      - Formato: **Sentence case** — solo la primera letra en mayúscula y el resto en minúscula, salvo nombres propios/siglas (ej. `Añadir autenticación con Google OAuth`). Sin prefijo de tipo (nada de `feat:`, `fix:`, etc.).
+      - Reglas: una sola línea, sin markdown, sin comillas, sin emojis, sin punto final, redactado en `contentLanguage`.
       - Muéstrame el título propuesto y espera mi confirmación ("sí" para usarlo, o indícame el cambio). Si lo confirmo, no preguntes nada más.
    c. Si NO hay argumento Y el working tree está limpio (sin diff staged, unstaged ni archivos untracked), entonces sí pregúntame el título (obligatorio) — no pidas nada más.
 
