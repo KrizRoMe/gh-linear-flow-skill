@@ -11,7 +11,7 @@ Suite de skills para el flujo GitHub (`gh`) + Linear: crear tareas, ramas, commi
 
 ### Opción A: con `skills` CLI (recomendada)
 
-Instala las 7 skills de la suite con un solo comando, sin clonar el repo:
+Instala las 8 skills de la suite con un solo comando, sin clonar el repo:
 
 ```bash
 npx skills add KrizRoMe/gh-linear-flow-skill --skill '*'
@@ -45,12 +45,19 @@ Si no especificas nada en ningún lado, cada agente cae a su propio default: el 
 
 | Skill | Qué hace | Argumentos |
 |---|---|---|
-| `/linear-task` | Crea un issue nuevo en Linear + la rama de git correspondiente | `[titulo-opcional]` — si no lo das (ej. `/linear-task Arreglar bug de login`), te lo pregunta |
+| `/linear-task` | Crea un issue nuevo en Linear + la rama de git correspondiente | `[titulo-opcional]` — si lo das (ej. `/linear-task Arreglar bug de login`) se usa tal cual; si lo omites se infiere del diff de git (staged → unstaged → untracked) y te pide confirmación; si el working tree está limpio te pregunta el título |
 | `/linear-branch` | Crea la rama de git para un issue de Linear que ya existe | `[identificador]` — si no lo das (ej. `/linear-branch RC-456`), te lo pregunta |
 | `/autocommit` | Genera y ejecuta un commit (conventional commits) a partir del diff en staged | Ninguno |
 | `/pr` | Genera la descripción del PR y lo crea en GitHub con `gh` | Ninguno |
 | `/prdesc` | Genera solo la descripción del PR, sin crearlo (preview) | Ninguno |
 | `/pr-notify` | Busca los PRs relacionados al issue de la rama actual y arma un mensaje para notificar | `[identificador-opcional]` — si no lo das, lo detecta del nombre de la rama actual |
 | `/my-issues` | Lista tus issues pendientes en Linear | Ninguno |
+| `/ship` | Encadena `/autocommit` + `/pr` + `/pr-notify` de forma autónoma (commit → push → crear PR → armar notify) | Flags opcionales (todas combinables): `--message "<msg>"` fuerza el mensaje del commit; `--title "<title>"` fuerza el título del PR; `--body-file <path>` usa tu descripción en vez de autogenerar; `--dry-run` solo muestra qué haría sin ejecutar nada; `--no-notify` salta el bloque de notificación al final |
 
 Todos tienen `disable-model-invocation: true`: Claude nunca los dispara solo, siempre los invocas tú explícitamente con `/nombre`.
+
+### Sobre `/ship`
+
+`/ship` no es un reemplazo de las skills separadas — es un atajo para el final del flujo, cuando ya implementaste y querés commitear + abrir PR + notificar de un saque. NO hace merge, NO transiciona estados de Linear, NO archiva nada. Si querés revisar la descripción del PR antes de crearlo, usá `/prdesc` + `/pr` por separado.
+
+Riesgos aceptados al usarlo: el modelo puede alucinar el título del commit / título del PR / descripción. Si pasa, corregilo con `gh pr edit --title ...` o `gh pr edit --body ...` después. Las flags `--message`, `--title` y `--body-file` son tu escape hatch para forzar valores literales.

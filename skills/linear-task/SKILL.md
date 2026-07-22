@@ -2,7 +2,7 @@
 name: linear-task
 description: Crea un issue nuevo en Linear asignado a ti, en estado "In Progress", y crea la rama de git correspondiente desde la rama base. Úsalo al empezar una tarea nueva que todavía no existe en Linear.
 disable-model-invocation: true
-argument-hint: "[titulo-opcional]"
+argument-hint: "[titulo-opcional — si lo omites se infiere del diff de git]"
 ---
 
 Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en Linear.
@@ -11,7 +11,15 @@ Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en L
 
 1. Usa la tool MCP de Linear `list_issue_statuses` para el `linearTeamId` de la config. Busca el estado cuyo nombre contenga "progress" (sin distinguir mayúsculas). Extrae su id como <inProgressStateId>.
 
-2. Título del issue: si vino como argumento ($ARGUMENTS), úsalo directo y no preguntes. Si no, pregúntamelo (obligatorio) — no pidas nada más.
+2. Título del issue: resolver en este orden y detenerse en el primer caso que aplique:
+   a. Si vino como argumento ($ARGUMENTS), úsalo directo y no preguntes.
+   b. Si NO vino argumento, intenta autogenerarlo a partir del diff de git del working tree (prioridad: staged → unstaged → untracked). Para ello:
+      - Recolecta contexto en una sola pasada: `git status --short` + `git diff --staged` + `git diff` (limita cada diff a ~400 líneas con `| head -400` si hace falta).
+      - Analiza los cambios y genera un título corto (máx. ~80 caracteres) estilo conventional commit pero legible como título de Linear (sin paréntesis tipo `(scope)` si quedan redundantes). Formato preferido: `<tipo>: <descripción breve y específica>`.
+      - Tipos válidos: feat, fix, refactor, docs, perf, test, build, ci, chore.
+      - Reglas: una sola línea, minúsculas, sin markdown, sin comillas, sin emojis, sin punto final, imperativo/infinitivo.
+      - Muéstrame el título propuesto y espera mi confirmación ("sí" para usarlo, o indícame el cambio). Si lo confirmo, no preguntes nada más.
+   c. Si NO hay argumento Y el working tree está limpio (sin diff staged, unstaged ni archivos untracked), entonces sí pregúntame el título (obligatorio) — no pidas nada más.
 
 3. A partir del título (más cualquier contexto extra que yo dé voluntariamente), genera la descripción del issue en el idioma configurado en `contentLanguage` (de la config), como una User Story completa, usando exactamente estas secciones markdown `##`, en este orden, traducidas al idioma configurado:
 
