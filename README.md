@@ -78,9 +78,13 @@ Riesgos aceptados al usarlo: el modelo puede alucinar el título del commit / t�
 **Flujo típico:**
 
 1. Desde el worktree principal (en cualquier rama): corré `/linear-worktree-task` (o `/linear-worktree-branch RC-456`).
-2. El skill crea el issue en Linear (si aplica) y devuelve la ruta `.trees/<branch>`.
-3. Abrí esa carpeta en tu editor (o `cd .trees/<branch>` desde la terminal) y trabajá ahí.
-4. Cuando termines: corré `/autocommit`, `/prdesc`/`/pr` y `/pr-notify` **desde el worktree nuevo**, no desde el principal.
+2. El skill crea el issue en Linear (si aplica), valida que la rama base sea `develop` (si no lo es, te pide confirmación), trae el último `fetch` de esa base y crea el worktree en `.trees/<branch>`.
+3. Como bonus, el skill hace `cd .trees/<branch>` dentro de la misma sesión — las próximas llamadas a Bash (git status, /autocommit, /prdesc, /pr, /ship, /pr-notify) corren directamente sobre el worktree nuevo sin que tengas que cambiar de carpeta.
+4. Cuando termines: corré `/autocommit`, `/prdesc`/`/pr` y `/pr-notify`. Si seguís en la misma sesión ya estás en el worktree; si abriste sesión nueva, primero `cd .trees/<branch>`.
+
+**Sobre la rama base:**
+
+Por default la suite usa `develop` como base (configurable vía `baseBranch` en `~/.claude/gh-linear-flow.config.json`). Si por algún motivo la base resuelta **no es `develop`** (config con otro valor, o vos pediste explícitamente otra base en la invocación), el skill te avisa y te pide confirmación antes de crear el worktree.
 
 **Limitaciones:**
 - Los worktrees comparten el `.git/` del repo, así que no podés tener dos worktrees en la misma rama (git lo rechaza con "already exists").
