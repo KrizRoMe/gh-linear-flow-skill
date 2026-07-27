@@ -11,7 +11,7 @@ Suite de skills para el flujo GitHub (`gh`) + Linear: crear tareas, ramas, commi
 
 ### Opción A: con `skills` CLI (recomendada)
 
-Instala las 8 skills de la suite con un solo comando, sin clonar el repo:
+Instala las 10 skills de la suite con un solo comando, sin clonar el repo:
 
 ```bash
 npx skills add KrizRoMe/gh-linear-flow-skill --skill '*'
@@ -47,6 +47,8 @@ Si no especificas nada en ningún lado, cada agente cae a su propio default: el 
 |---|---|---|
 | `/linear-task` | Crea un issue nuevo en Linear + la rama de git correspondiente | `[titulo-opcional]` — si lo das (ej. `/linear-task Arreglar bug de login`) se usa tal cual; si lo omites se infiere del diff de git (staged → unstaged → untracked) en formato Sentence case y te pide confirmación; si el working tree está limpio te pregunta el título |
 | `/linear-branch` | Crea la rama de git para un issue de Linear que ya existe | `[identificador]` — si no lo das (ej. `/linear-branch RC-456`), te lo pregunta |
+| `/linear-worktree-task` | Crea un issue nuevo en Linear + un worktree de git en `.trees/<branch>` desde la rama base (no toca la rama actual del worktree principal) | `[titulo-opcional]` — mismas reglas que `/linear-task` para inferir el título del diff o pedírtelo |
+| `/linear-worktree-branch` | Crea un worktree de git en `.trees/<branch>` desde la rama base para un issue de Linear que ya existe (no toca la rama actual del worktree principal) | `[identificador]` — mismo comportamiento que `/linear-branch` |
 | `/autocommit` | Genera y ejecuta un commit (conventional commits) a partir del diff en staged | Ninguno |
 | `/pr` | Genera la descripción del PR y lo crea en GitHub con `gh` | Ninguno |
 | `/prdesc` | Genera solo la descripción del PR, sin crearlo (preview) | Ninguno |
@@ -61,3 +63,25 @@ Todos tienen `disable-model-invocation: true`: Claude nunca los dispara solo, si
 `/ship` no es un reemplazo de las skills separadas — es un atajo para el final del flujo, cuando ya implementaste y querés commitear + abrir PR + notificar de un saque. NO hace merge, NO transiciona estados de Linear, NO archiva nada. Si querés revisar la descripción del PR antes de crearlo, usá `/prdesc` + `/pr` por separado.
 
 Riesgos aceptados al usarlo: el modelo puede alucinar el título del commit / título del PR / descripción. Si pasa, corregilo con `gh pr edit --title ...` o `gh pr edit --body ...` después. Las flags `--message`, `--title` y `--body-file` son tu escape hatch para forzar valores literales.
+
+### Sobre `/linear-worktree-task` y `/linear-worktree-branch`
+
+`/linear-worktree-task` y `/linear-worktree-branch` son variantes paralelas de `/linear-task` y `/linear-branch` que usan **git worktrees** en lugar de cambiar la rama del worktree principal.
+
+**Cuándo usarlos:**
+- Cuando querés arrancar una feature o fix sin perder lo que tenés a medio hacer en el worktree principal.
+- Cuando querés mantener varios issues en paralelo en tu máquina (uno por worktree, todos editables al mismo tiempo).
+- Cuando ya tenés cambios sin commitear en el principal y NO querés stashearlos ni commitearlos antes de arrancar la siguiente tarea.
+
+**Convención de rutas:** cada worktree se crea en `.trees/<branch>` (carpeta relativa a la raíz del repo). El directorio `.trees/` está en `.gitignore` para que los worktrees no contaminen el tracking del repo principal.
+
+**Flujo típico:**
+
+1. Desde el worktree principal (en cualquier rama): corré `/linear-worktree-task` (o `/linear-worktree-branch RC-456`).
+2. El skill crea el issue en Linear (si aplica) y devuelve la ruta `.trees/<branch>`.
+3. Abrí esa carpeta en tu editor (o `cd .trees/<branch>` desde la terminal) y trabajá ahí.
+4. Cuando termines: corré `/autocommit`, `/prdesc`/`/pr` y `/pr-notify` **desde el worktree nuevo**, no desde el principal.
+
+**Limitaciones:**
+- Los worktrees comparten el `.git/` del repo, así que no podés tener dos worktrees en la misma rama (git lo rechaza con "already exists").
+- El flujo asume que la rama base (`baseBranch` de la config) existe localmente o podés fetchearla. Si tu remote default no es `origin`, ajustá los comandos manualmente.
