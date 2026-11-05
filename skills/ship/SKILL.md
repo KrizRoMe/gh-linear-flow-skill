@@ -1,6 +1,6 @@
 ---
 name: ship
-description: Encadena git status defensivo + /autocommit + /pr + /pr-notify en una sola invocación autónoma. Úsalo cuando ya terminaste de implementar y querés commitear, pushear, crear el PR y armar el mensaje de notificación de un saque. NO hace merge ni transiciona estados de Linear.
+description: Encadena git status defensivo + /autocommit + /pr + /pr-notify en una sola invocación autónoma. Úsalo cuando ya terminaste de implementar y querés commitear, pushear, crear el PR y armar el mensaje de notificación en un solo paso. NO hace merge ni transiciona estados de Linear.
 disable-model-invocation: true
 argument-hint: "[--message \"<msg>\"] [--title \"<title>\"] [--body-file <path>] [--dry-run] [--no-notify]"
 ---

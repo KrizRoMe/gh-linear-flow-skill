@@ -38,4 +38,4 @@ Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en L
    - Estado: <state.name>
    - URL: <url>
    - Rama: <branchName>
-   - Siguientes pasos: implementa los cambios, luego corre /autocommit y /prdesc (o directo /pr si ya quieres crear el PR)
+   - Siguientes pasos: implementa los cambios, luego corre /autocommit y /prdesc (o directo /pr si ya quieres crear el PR, o /ship para encadenar todo en un solo paso)
