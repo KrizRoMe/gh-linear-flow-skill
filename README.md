@@ -1,66 +1,66 @@
 # gh-linear-flow
 
-Suite de skills para el flujo GitHub (`gh`) + Linear: crear tareas, ramas, commits, PRs y notificaciones — sin repetir datos personales en cada máquina.
+Skill suite for the GitHub (`gh`) + Linear workflow: creating tasks, branches, commits, PRs, and notifications — without repeating personal data on every machine.
 
-## Prerrequisitos
+## Prerequisites
 
-- [GitHub CLI](https://cli.github.com) autenticado: `gh auth status` debe pasar.
-- Servidor MCP de Linear conectado en tu agente.
+- [GitHub CLI](https://cli.github.com) authenticated: `gh auth status` must pass.
+- Linear MCP server connected in your agent.
 
-## Instalación
+## Installation
 
 ```bash
 npx skills add KrizRoMe/gh-linear-flow-skill --skill '*'
 ```
 
-¿Preferís clonar el repo en vez de usar `skills` CLI? Ver [Opción B](#opción-b-clonando-el-repo) más abajo.
+Prefer cloning the repo instead of the `skills` CLI? See [Option B](#option-b-cloning-the-repo) below.
 
-## Configuración
+## Configuration
 
-Nada hardcodeado: todo se pregunta por chat y se guarda en `~/.claude/gh-linear-flow.config.json`.
+Nothing is hardcoded: everything is asked through chat and saved to `~/.claude/gh-linear-flow.config.json`.
 
-- **`/setup`** (recomendado): configura todo de una sola tanda la primera vez. Si ya tenés todo configurado, te deja cambiar un dato puntual (`/setup baseBranch`) sin tocar el resto.
-- **Lazy**: sin correr `/setup`, cualquier otro skill te pregunta lo que le falte la primera vez que lo usás.
+- **`/setup`** (recommended): configures everything in one go the first time. If you already have everything configured, it lets you change a single value (`/setup baseBranch`) without touching the rest.
+- **Lazy**: without running `/setup`, any other skill asks for whatever it's missing the first time you use it.
 
-Los repos relacionados (`relatedRepos`, para `/pr-notify` y `/ship`) se guardan por repo y en ambos sentidos: relacionar `repo-web` con `repo-api` deja a `repo-api` relacionado con `repo-web` automáticamente.
+Related repos (`relatedRepos`, used by `/pr-notify` and `/ship`) are saved per repo and in both directions: linking `repo-web` to `repo-api` automatically links `repo-api` back to `repo-web`.
 
-Esquema completo y cómo reconfigurar una clave sola: [resources/config.md](resources/config.md).
+Full schema and how to reconfigure a single key: [resources/config.md](resources/config.md).
 
-## Skills incluidos
+## Included skills
 
-| Skill | Qué hace | Argumentos |
+| Skill | What it does | Arguments |
 |---|---|---|
-| `/setup` | Configura o reconfigura los datos de la suite | `[clave-opcional]` |
-| `/linear-task` | Crea un issue en Linear + su rama de git | `[titulo-opcional]` — se infiere del diff si lo omitís |
-| `/linear-branch` | Crea la rama de git para un issue que ya existe | `[identificador]` |
-| `/linear-worktree-task` | Igual que `/linear-task`, pero en un worktree (`.trees/<branch>`) | `[titulo-opcional]` |
-| `/linear-worktree-branch` | Igual que `/linear-branch`, pero en un worktree | `[identificador]` |
-| `/autocommit` | Genera y ejecuta un commit conventional a partir del staged | — |
-| `/pr` | Genera la descripción del PR y lo crea con `gh` | — |
-| `/prdesc` | Genera solo la descripción del PR (preview, sin crearlo) | — |
-| `/pr-notify` | Busca los PRs del issue actual y arma el mensaje para notificar | `[identificador-opcional]` |
-| `/my-issues` | Lista tus issues pendientes en Linear | — |
-| `/ship` | Encadena autocommit → pr → pr-notify de un saque | `--message`, `--title`, `--body-file`, `--dry-run`, `--no-notify` |
+| `/setup` | Sets up or reconfigures the suite's data | `[optional-key]` |
+| `/linear-task` | Creates a Linear issue + its git branch | `[optional-title]` — inferred from the diff if omitted |
+| `/linear-branch` | Creates the git branch for an existing issue | `[identifier]` |
+| `/linear-worktree-task` | Same as `/linear-task`, but in a worktree (`.trees/<branch>`) | `[optional-title]` |
+| `/linear-worktree-branch` | Same as `/linear-branch`, but in a worktree | `[identifier]` |
+| `/autocommit` | Generates and runs a conventional commit from staged changes | — |
+| `/pr` | Generates the PR description and creates it with `gh` | — |
+| `/prdesc` | Generates only the PR description (preview, no PR created) | — |
+| `/pr-notify` | Finds the PRs for the current issue and builds the notification message | `[optional-identifier]` |
+| `/my-issues` | Lists your pending Linear issues | — |
+| `/ship` | Chains autocommit → pr → pr-notify in one go | `--message`, `--title`, `--body-file`, `--dry-run`, `--no-notify` |
 
-Todos tienen `disable-model-invocation: true` — nunca se disparan solos, siempre los invocás con `/nombre`.
+All of them have `disable-model-invocation: true` — they never trigger on their own, you always call them with `/name`.
 
 ### `/ship`
 
-Atajo para el final del flujo (commit + PR + notify), no un reemplazo de las skills separadas. NO hace merge ni toca estados de Linear. El modelo puede alucinar el título/descripción — usá `--message`/`--title`/`--body-file` para forzar valores literales, o corregí después con `gh pr edit`.
+A shortcut for the end of the workflow (commit + PR + notify), not a replacement for the separate skills. It does NOT merge or touch Linear states. The model can hallucinate the title/description — use `--message`/`--title`/`--body-file` to force literal values, or fix it afterward with `gh pr edit`.
 
 ### Worktrees (`/linear-worktree-task`, `/linear-worktree-branch`)
 
-Usan **git worktrees** en `.trees/<branch>` (gitignored) en vez de cambiar la rama del worktree principal — útil para trabajar varios issues en paralelo sin stashear nada. El skill te deja el `cd` hecho dentro de la misma sesión; si abrís sesión nueva, repetilo a mano. Base por default: `develop` (configurable vía `baseBranch`); si resulta otra, te pide confirmación antes de crear el worktree.
+These use **git worktrees** in `.trees/<branch>` (gitignored) instead of switching the main worktree's branch — handy for working on several issues in parallel without stashing anything. The skill leaves you `cd`'d into it within the same session; if you open a new session, repeat the `cd` manually. Default base branch: `develop` (configurable via `baseBranch`); if it resolves to something else, it asks for confirmation before creating the worktree.
 
-Limitación: no podés tener dos worktrees en la misma rama (git lo rechaza).
+Limitation: you can't have two worktrees on the same branch (git rejects it).
 
-## Modelo
+## Model
 
-Estos skills no fijan modelo — usan el que ya esté activo en tu agente (`/model` en Claude Code, `opencode.json`/`/models` en OpenCode, etc.).
+These skills don't pin a model — they use whatever is already active in your agent (`/model` in Claude Code, `opencode.json`/`/models` in OpenCode, etc.).
 
 ---
 
-### Opción B: clonando el repo
+### Option B: cloning the repo
 
 ```bash
 git clone git@github.com:KrizRoMe/gh-linear-flow-skill.git
@@ -68,4 +68,4 @@ cd gh-linear-flow-skill
 ./install.sh
 ```
 
-Crea un symlink por cada skill en `~/.claude/skills/`. Abrí una sesión nueva de `claude` para que los detecte.
+Creates a symlink for each skill in `~/.claude/skills/`. Open a new `claude` session so it picks them up.
