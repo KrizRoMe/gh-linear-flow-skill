@@ -14,7 +14,7 @@ Flags opcionales (evalúalas en este orden, todas son opt-in):
 - `--body-file <path>`: si está, lee ese archivo y úsalo como `--body` de `gh pr create` en lugar de autogenerar la descripción.
 - `--no-notify`: si está, salta el bloque de notificación al final.
 
-0. Config: localiza y sigue el procedimiento en `resources/config.md` (raíz del proyecto, dos niveles arriba de este SKILL.md; si tu entorno define `${CLAUDE_SKILL_DIR}`, es `${CLAUDE_SKILL_DIR}/../../resources/config.md`). Claves requeridas para este skill: `baseBranch`, `contentLanguage`, `githubRepos`, `notifyRecipient`.
+0. Config: localiza y sigue el procedimiento en `resources/config.md` (raíz del proyecto, dos niveles arriba de este SKILL.md; si tu entorno define `${CLAUDE_SKILL_DIR}`, es `${CLAUDE_SKILL_DIR}/../../resources/config.md`). Claves requeridas para este skill: `baseBranch`, `contentLanguage`, `relatedRepos`.
 
 1. Parseo de flags: extrae de `$ARGUMENTS` los flags opcionales y guárdalos como variables. Si queda algún argumento posicional no asociado a flag, trátalo como error y aborta con "Argumento no reconocido: `<arg>`. Flags válidas: --message, --title, --body-file, --dry-run, --no-notify".
 
@@ -71,23 +71,23 @@ Flags opcionales (evalúalas en este orden, todas son opt-in):
 
 9. **Bloque notificación** (encadenado desde `/pr-notify`) — solo si `--no-notify` NO está activo:
    a. Si `<linearId>` existe, usa `get_issue` con `<linearId>` para refrescar `<linearTitle>`.
-   b. Por cada repo en `githubRepos` (de la config), ejecuta en paralelo:
+   b. Obtén el repo de GitHub actual: `gh repo view --json nameWithOwner -q .nameWithOwner` → <repoActual>. Por cada repo en <repoActual> + `relatedRepos[<repoActual>]` (de la config), ejecuta en paralelo:
       - `gh pr list --repo <repo> --search "<linearId>" --state all --json number,title,url --limit 5`
       - Si el resultado está vacío, intenta fallback: `gh pr list --repo <repo> --head "<ramaActual>" --state all --json number,title,url --limit 5`
    c. Junta las URLs de PRs encontradas, agrupadas por repo.
-   d. Arma el mensaje con este formato exacto:
+   d. Arma el mensaje con este formato exacto (si hay <linearId>, antepónelo al título separado por " — "; si no hay <linearId>, usa solo el título):
       ```
-      <linearTitle>:
+      <linearId> — <linearTitle>:
       PRs:
       <url de cada PR encontrado, una por línea>
       ```
       Si no se encontró ningún PR, usa:
       ```
-      <linearTitle>:
+      <linearId> — <linearTitle>:
       PRs:
       (no se encontraron PRs aún — puede haber delay de indexación de GitHub; reintentá /pr-notify en unos minutos)
       ```
-   e. Muestra el mensaje en un bloque de código para que lo copies y se lo pases manualmente a `notifyRecipient` (de la config).
+   e. Muestra el mensaje en un bloque de código, listo para copiar y pegar donde haga falta.
 
 10. Resumen final:
     ```
@@ -95,7 +95,7 @@ Flags opcionales (evalúalas en este orden, todas son opt-in):
     - Rama: <ramaActual>
     - Commit: <hash corto> — <mensaje>
     - PR: <url>
-    - Notify: mensaje listo arriba (copiá y mandalo a <notifyRecipient>)
+    - Notify: mensaje listo arriba (copiá y pegalo donde haga falta)
     ```
 
 Notas operativas:

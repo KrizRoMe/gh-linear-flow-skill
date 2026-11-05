@@ -12,11 +12,13 @@ Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en L
 1. Pregúntame cuál es el identificador del issue de Linear (ej. RC-456), a menos que ya lo haya dado como argumento ($ARGUMENTS) — en ese caso úsalo directo y no preguntes.
 
 2. Usa la tool MCP de Linear `get_issue` con el identificador para obtener:
-   - identifier, title, branchName, url, description, state.name, priority
+   - identifier, title, branchName, url, description, state.name, priority, assignee.id
 
 3. Muéstrame los detalles del issue para confirmar: título, estado, prioridad, resumen de la descripción.
 
-4. Antes de crear la rama, asegura que `baseBranch` (de la config) esté actualizada:
+4. Usa la tool MCP de Linear `whoami` para obtener el usuario autenticado en la sesión actual → <meId>. Si `assignee.id` del issue no coincide con <meId> (o el issue no tiene assignee), usa `save_issue` con `id: <identifier>` y `assigneeId: <meId>` para asignártelo — el issue debe terminar siempre asignado a quien está logueado en Linear ahora.
+
+5. Antes de crear la rama, asegura que `baseBranch` (de la config) esté actualizada:
    a. Ejecuta: `git branch --show-current` para obtener la rama actual.
    b. Si la rama actual NO es `baseBranch`:
       - DETENTE el flujo inmediatamente.
@@ -28,10 +30,10 @@ Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en L
    d. Ejecuta: `git pull`.
    e. Si algún paso falla, detente y reporta el error.
 
-5. Crea la rama de git desde `<baseBranch>` usando el `branchName` de Linear:
+6. Crea la rama de git desde `<baseBranch>` usando el `branchName` de Linear:
    Ejecuta: `git checkout -b <branchName>`
 
-6. Imprime resumen:
+7. Imprime resumen:
    - Issue de Linear: <identifier> — <title>
    - Estado: <state.name>
    - URL: <url>

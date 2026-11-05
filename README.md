@@ -11,7 +11,7 @@ Suite de skills para el flujo GitHub (`gh`) + Linear: crear tareas, ramas, commi
 
 ### Opción A: con `skills` CLI (recomendada)
 
-Instala las 10 skills de la suite con un solo comando, sin clonar el repo:
+Instala las 11 skills de la suite con un solo comando, sin clonar el repo:
 
 ```bash
 npx skills add KrizRoMe/gh-linear-flow-skill --skill '*'
@@ -29,7 +29,16 @@ Esto crea un symlink por cada skill en `~/.claude/skills/`. Abre una sesión nue
 
 ## Configuración
 
-Ningún dato personal está hardcodeado. La primera vez que uses cualquiera de estos skills y le falte un dato (tu correo de Linear, el equipo, los repos de GitHub, la rama base), te preguntará una sola vez y lo guardará en `~/.claude/gh-linear-flow.config.json` para las próximas veces. Ver [resources/config.md](resources/config.md) para el esquema completo y cómo reconfigurar valores puntuales sin repetir todo el bootstrap.
+Ningún dato personal está hardcodeado. Ningún skill necesita que configures nada a mano en archivos: todo se pregunta por chat y se guarda en `~/.claude/gh-linear-flow.config.json`.
+
+Tenés dos formas de configurar:
+
+- **`/setup`** (recomendado): corré este skill una sola vez después de instalar la suite. Te pregunta de una sola tanda todo lo que te falte — correo de Linear, equipo, rama base, idioma de contenido, repos relacionados del repo actual — y lo deja guardado para siempre. Si ya tenías todo configurado (por ejemplo, venís del flujo lazy), `/setup` detecta que no falta nada y te pregunta si querés modificar algo puntual en vez de volver a pedirte todo; también podés ir directo con `/setup <clave>` (ej. `/setup baseBranch`) para cambiar solo esa clave sin tocar el resto.
+- **Lazy (default sin `/setup`)**: la primera vez que uses cualquier otro skill y le falte un dato, te lo pregunta en el momento y lo guarda para las próximas veces.
+
+Los repos relacionados (`relatedRepos`, usados por `/pr-notify` y `/ship` para buscar PRs en otros repos del mismo feature) se guardan por repo y de forma bidireccional: si configurás que `repo-web` está relacionado con `repo-api`, `repo-api` queda automáticamente relacionado con `repo-web` también, aunque nunca hayas corrido `/setup` o `/pr-notify` parado en ese repo.
+
+Ver [resources/config.md](resources/config.md) para el esquema completo y cómo reconfigurar valores puntuales sin repetir todo el bootstrap.
 
 ## Modelo
 
@@ -45,6 +54,7 @@ Si no especificas nada en ningún lado, cada agente cae a su propio default: el 
 
 | Skill | Qué hace | Argumentos |
 |---|---|---|
+| `/setup` | Configura (o reconfigura) de una sola vez todos los datos de la suite: Linear, repos relacionados, idioma | `[clave-opcional]` — si la das (ej. `/setup baseBranch`) cambia solo esa clave; si la omites, pregunta lo que falte, o te deja elegir qué cambiar si ya está todo configurado |
 | `/linear-task` | Crea un issue nuevo en Linear + la rama de git correspondiente | `[titulo-opcional]` — si lo das (ej. `/linear-task Arreglar bug de login`) se usa tal cual; si lo omites se infiere del diff de git (staged → unstaged → untracked) en formato Sentence case y te pide confirmación; si el working tree está limpio te pregunta el título |
 | `/linear-branch` | Crea la rama de git para un issue de Linear que ya existe | `[identificador]` — si no lo das (ej. `/linear-branch RC-456`), te lo pregunta |
 | `/linear-worktree-task` | Crea un issue nuevo en Linear + un worktree de git en `.trees/<branch>` desde la rama base (no toca la rama actual del worktree principal) | `[titulo-opcional]` — mismas reglas que `/linear-task` para inferir el título del diff o pedírtelo |

@@ -7,11 +7,13 @@ argument-hint: "[titulo-opcional — si lo omites se infiere del diff de git]"
 
 Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en Linear.
 
-0. Config: localiza y sigue el procedimiento en `resources/config.md` (raíz del proyecto, dos niveles arriba de este SKILL.md; si tu entorno define `${CLAUDE_SKILL_DIR}`, es `${CLAUDE_SKILL_DIR}/../../resources/config.md`). Claves requeridas para este skill: `linearEmail`, `linearUserId`, `linearTeamId`, `baseBranch`, `contentLanguage`.
+0. Config: localiza y sigue el procedimiento en `resources/config.md` (raíz del proyecto, dos niveles arriba de este SKILL.md; si tu entorno define `${CLAUDE_SKILL_DIR}`, es `${CLAUDE_SKILL_DIR}/../../resources/config.md`). Claves requeridas para este skill: `linearTeamId`, `baseBranch`, `contentLanguage`.
 
-1. Usa la tool MCP de Linear `list_issue_statuses` para el `linearTeamId` de la config. Busca el estado cuyo nombre contenga "progress" (sin distinguir mayúsculas). Extrae su id como <inProgressStateId>.
+1. Usa la tool MCP de Linear `whoami` para obtener el usuario autenticado en la sesión actual → <meId>. El issue se asigna siempre a este usuario, sin importar quién esté configurado en `linearEmail`/`linearUserId`.
 
-2. Título del issue: resolver en este orden y detenerse en el primer caso que aplique:
+2. Usa la tool MCP de Linear `list_issue_statuses` para el `linearTeamId` de la config. Busca el estado cuyo nombre contenga "progress" (sin distinguir mayúsculas). Extrae su id como <inProgressStateId>.
+
+3. Título del issue: resolver en este orden y detenerse en el primer caso que aplique:
    a. Si vino como argumento ($ARGUMENTS), úsalo directo y no preguntes.
    b. Si NO vino argumento, intenta autogenerarlo a partir del diff de git del working tree (prioridad: staged → unstaged → untracked). Para ello:
       - Recolecta contexto en una sola pasada: `git status --short` + `git diff --staged` + `git diff` (limita cada diff a ~400 líneas con `| head -400` si hace falta).
@@ -21,7 +23,7 @@ Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en L
       - Muéstrame el título propuesto y espera mi confirmación ("sí" para usarlo, o indícame el cambio). Si lo confirmo, no preguntes nada más.
    c. Si NO hay argumento Y el working tree está limpio (sin diff staged, unstaged ni archivos untracked), entonces sí pregúntame el título (obligatorio) — no pidas nada más.
 
-3. A partir del título (más cualquier contexto extra que yo dé voluntariamente), genera la descripción del issue en el idioma configurado en `contentLanguage` (de la config), como una User Story completa, usando exactamente estas secciones markdown `##`, en este orden, traducidas al idioma configurado:
+4. A partir del título (más cualquier contexto extra que yo dé voluntariamente), genera la descripción del issue en el idioma configurado en `contentLanguage` (de la config), como una User Story completa, usando exactamente estas secciones markdown `##`, en este orden, traducidas al idioma configurado:
 
    - Inglés (default): `## Description`, `## Scope`, `## Acceptance Criteria`, `## Business Rules`, `## Out of Scope`, `## Dependencies`, `## Mockups/Figma`
    - Español: `## Descripción`, `## Alcance (Scope)`, `## Criterios de aceptación`, `## Reglas de negocio`, `## Fuera de alcance`, `## Dependencias`, `## Mockups/Figma`
@@ -38,21 +40,21 @@ Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en L
 
    No inventes reglas de negocio, dependencias ni links de mockups que no estén fundamentados en el título o contexto dado — usa los fallbacks de N/A de arriba en su lugar. No me pidas la descripción a menos que yo la haya dado explícitamente.
 
-4. Usa la tool MCP de Linear `create_issue` con:
+5. Usa la tool MCP de Linear `create_issue` con:
    - title: <título dado>
    - description: <descripción generada>
    - teamId: <linearTeamId de la config>
    - priority: 3
-   - assigneeId: <linearUserId de la config>
+   - assigneeId: <meId>
    - stateId: <inProgressStateId>
 
-5. De la respuesta de `create_issue` extrae:
+6. De la respuesta de `create_issue` extrae:
    - identifier (ej. RC-123)
    - branchName (ej. usuario/rc-123-titulo-del-issue)
    - url
    - title
 
-6. Antes de crear la rama, asegura que la rama base (`baseBranch` de la config) esté actualizada:
+7. Antes de crear la rama, asegura que la rama base (`baseBranch` de la config) esté actualizada:
    a. Ejecuta: `git branch --show-current` para obtener la rama actual.
    b. Si la rama actual NO es `baseBranch`:
       - DETENTE el flujo inmediatamente.
@@ -66,10 +68,10 @@ Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en L
    d. Ejecuta: `git pull`.
    e. Si algún paso falla, detente y reporta el error.
 
-7. Crea la rama de git desde `<baseBranch>` usando el `branchName` de Linear:
+8. Crea la rama de git desde `<baseBranch>` usando el `branchName` de Linear:
    Ejecuta: `git checkout -b <branchName>`
 
-8. Imprime un resumen claro:
+9. Imprime un resumen claro:
    - Issue de Linear: <identifier> — <title>
    - URL: <url>
    - Rama: <branchName>

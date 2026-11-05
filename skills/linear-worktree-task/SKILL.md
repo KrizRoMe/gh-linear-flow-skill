@@ -9,11 +9,13 @@ Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en L
 
 A diferencia de /linear-task y /linear-branch, este skill NO modifica la rama actual del worktree principal: crea un worktree paralelo en `.trees/<branch>` y te deja seguir haciendo lo que estés haciendo en el principal. Si preferís el flujo clásico (cambiar la rama del principal), usá /linear-task o /linear-branch.
 
-0. Config: localiza y sigue el procedimiento en `resources/config.md` (raíz del proyecto, dos niveles arriba de este SKILL.md; si tu entorno define `${CLAUDE_SKILL_DIR}`, es `${CLAUDE_SKILL_DIR}/../../resources/config.md`). Claves requeridas para este skill: `linearEmail`, `linearUserId`, `linearTeamId`, `baseBranch`, `contentLanguage`.
+0. Config: localiza y sigue el procedimiento en `resources/config.md` (raíz del proyecto, dos niveles arriba de este SKILL.md; si tu entorno define `${CLAUDE_SKILL_DIR}`, es `${CLAUDE_SKILL_DIR}/../../resources/config.md`). Claves requeridas para este skill: `linearTeamId`, `baseBranch`, `contentLanguage`.
 
-1. Usa la tool MCP de Linear `list_issue_statuses` para el `linearTeamId` de la config. Busca el estado cuyo nombre contenga "progress" (sin distinguir mayúsculas). Extrae su id como <inProgressStateId>.
+1. Usa la tool MCP de Linear `whoami` para obtener el usuario autenticado en la sesión actual → <meId>. El issue se asigna siempre a este usuario, sin importar quién esté configurado en `linearEmail`/`linearUserId`.
 
-2. Título del issue: resolver en este orden y detenerse en el primer caso que aplique:
+2. Usa la tool MCP de Linear `list_issue_statuses` para el `linearTeamId` de la config. Busca el estado cuyo nombre contenga "progress" (sin distinguir mayúsculas). Extrae su id como <inProgressStateId>.
+
+3. Título del issue: resolver en este orden y detenerse en el primer caso que aplique:
    a. Si vino como argumento ($ARGUMENTS), úsalo directo y no preguntes.
    b. Si NO vino argumento, intenta autogenerarlo a partir del diff de git del working tree del WORKTREE PRINCIPAL (donde estás parado ahora mismo; prioridad: staged → unstaged → untracked). Para ello:
       - Recolecta contexto en una sola pasada: `git status --short` + `git diff --staged` + `git diff` (limita cada diff a ~400 líneas con `| head -400` si hace falta).
@@ -23,7 +25,7 @@ A diferencia de /linear-task y /linear-branch, este skill NO modifica la rama ac
       - Muéstrame el título propuesto y espera mi confirmación ("sí" para usarlo, o indícame el cambio). Si lo confirmo, no preguntes nada más.
    c. Si NO hay argumento Y el working tree del worktree principal está limpio (sin diff staged, unstaged ni archivos untracked), entonces sí pregúntame el título (obligatorio) — no pidas nada más.
 
-3. A partir del título (más cualquier contexto extra que yo dé voluntariamente), genera la descripción del issue en el idioma configurado en `contentLanguage` (de la config), como una User Story completa, usando exactamente estas secciones markdown `##`, en este orden, traducidas al idioma configurado:
+4. A partir del título (más cualquier contexto extra que yo dé voluntariamente), genera la descripción del issue en el idioma configurado en `contentLanguage` (de la config), como una User Story completa, usando exactamente estas secciones markdown `##`, en este orden, traducidas al idioma configurado:
 
    - Inglés (default): `## Description`, `## Scope`, `## Acceptance Criteria`, `## Business Rules`, `## Out of Scope`, `## Dependencies`, `## Mockups/Figma`
    - Español: `## Descripción`, `## Alcance (Scope)`, `## Criterios de aceptación`, `## Reglas de negocio`, `## Fuera de alcance`, `## Dependencias`, `## Mockups/Figma`
@@ -40,21 +42,21 @@ A diferencia de /linear-task y /linear-branch, este skill NO modifica la rama ac
 
    No inventes reglas de negocio, dependencias ni links de mockups que no estén fundamentados en el título o contexto dado — usa los fallbacks de N/A de arriba en su lugar. No me pidas la descripción a menos que yo la haya dado explícitamente.
 
-4. Usa la tool MCP de Linear `create_issue` con:
+5. Usa la tool MCP de Linear `create_issue` con:
    - title: <título dado>
    - description: <descripción generada>
    - teamId: <linearTeamId de la config>
    - priority: 3
-   - assigneeId: <linearUserId de la config>
+   - assigneeId: <meId>
    - stateId: <inProgressStateId>
 
-5. De la respuesta de `create_issue` extrae:
+6. De la respuesta de `create_issue` extrae:
    - identifier (ej. RC-123)
    - branchName (ej. usuario/rc-123-titulo-del-issue)
    - url
    - title
 
-6. Asegurate de que la rama base (`baseBranch` de la config) esté actualizada SIN cambiar la rama actual del worktree principal:
+7. Asegurate de que la rama base (`baseBranch` de la config) esté actualizada SIN cambiar la rama actual del worktree principal:
    a. La rama base default es `develop` — leela desde `baseBranch` de la config (si no está definida, asumí "develop").
    b. Si `<baseBranch>` es literalmente `develop`, continuá sin preguntar.
    c. Si `<baseBranch>` es cualquier otra rama (ej. config tiene "main", "release/x", o el usuario pidió un override en $ARGUMENTS tipo "desde feature-x"), MOSTRALE esta advertencia y esperá confirmación:
@@ -66,7 +68,7 @@ A diferencia de /linear-task y /linear-branch, este skill NO modifica la rama ac
    f. (Recomendado, no obligatorio) Verificá que la rama local `<baseBranch>` exista; si no, podés crearla con `git branch --track <baseBranch> origin/<baseBranch>` para que `git worktree add` la pueda usar de base. La alternativa es pasar `origin/<baseBranch>` directamente al worktree add.
    g. Si algún paso falla, detente y reporta el error.
 
-7. Crea el worktree apuntando a la nueva rama, anclado en `<baseBranch>` actualizado:
+8. Crea el worktree apuntando a la nueva rama, anclado en `<baseBranch>` actualizado:
    Ejecuta:
      git worktree add .trees/<branchName> -b <branchName> <baseBranch>
    (donde `<baseBranch>` puede ser el nombre local o `origin/<baseBranch>` si la local no existe todavía).
@@ -74,7 +76,7 @@ A diferencia de /linear-task y /linear-branch, este skill NO modifica la rama ac
    - Si el directorio `.trees/` no existe, `git worktree add` lo crea automáticamente — no hace falta crearlo antes.
    - Si ya existe un worktree en esa ruta (porque volvés a correr el skill con el mismo branch), `git worktree add` falla con "already exists". En ese caso, listá los worktrees existentes con `git worktree list` y sugerí al usuario removerlo (`git worktree remove .trees/<branchName>`) o elegir otra rama.
 
-8. Cambiá al worktree nuevo (la tool de Bash mantiene el `cd` entre llamadas de la misma sesión, así que las próximas invocaciones corren sobre el worktree nuevo):
+9. Cambiá al worktree nuevo (la tool de Bash mantiene el `cd` entre llamadas de la misma sesión, así que las próximas invocaciones corren sobre el worktree nuevo):
    Ejecutá en una sola llamada a Bash:
      cd .trees/<branchName> && pwd && git branch --show-current && git status --short
    Verificá que el output muestre:
@@ -86,7 +88,7 @@ A diferencia de /linear-task y /linear-branch, este skill NO modifica la rama ac
 
    Nota: si el usuario sale y vuelve en otra sesión, el `cd` se pierde. En ese caso tendrá que correr `cd .trees/<branchName>` manualmente antes de seguir.
 
-9. Imprime un resumen claro:
+10. Imprime un resumen claro:
    - Issue de Linear: <identifier> — <title>
    - URL: <url>
    - Rama: <branchName>

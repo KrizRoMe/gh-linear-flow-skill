@@ -14,11 +14,13 @@ A diferencia de /linear-task y /linear-branch, este skill NO modifica la rama ac
 1. Pregúntame cuál es el identificador del issue de Linear (ej. RC-456), a menos que ya lo haya dado como argumento ($ARGUMENTS) — en ese caso úsalo directo y no preguntes.
 
 2. Usa la tool MCP de Linear `get_issue` con el identificador para obtener:
-   - identifier, title, branchName, url, description, state.name, priority
+   - identifier, title, branchName, url, description, state.name, priority, assignee.id
 
 3. Muéstrame los detalles del issue para confirmar: título, estado, prioridad, resumen de la descripción.
 
-4. Asegurate de que `baseBranch` (de la config) esté actualizada SIN cambiar la rama actual del worktree principal:
+4. Usa la tool MCP de Linear `whoami` para obtener el usuario autenticado en la sesión actual → <meId>. Si `assignee.id` del issue no coincide con <meId> (o el issue no tiene assignee), usa `save_issue` con `id: <identifier>` y `assigneeId: <meId>` para asignártelo — el issue debe terminar siempre asignado a quien está logueado en Linear ahora.
+
+5. Asegurate de que `baseBranch` (de la config) esté actualizada SIN cambiar la rama actual del worktree principal:
    a. La rama base default es `develop` — leela desde `baseBranch` de la config (si no está definida, asumí "develop").
    b. Si `<baseBranch>` es literalmente `develop`, continuá sin preguntar.
    c. Si `<baseBranch>` es cualquier otra rama (ej. config tiene "main", "release/x", o el usuario pidió un override en $ARGUMENTS tipo "desde feature-x"), MOSTRALE esta advertencia y esperá confirmación:
@@ -30,7 +32,7 @@ A diferencia de /linear-task y /linear-branch, este skill NO modifica la rama ac
    f. (Recomendado, no obligatorio) Verificá que la rama local `<baseBranch>` exista; si no, podés crearla con `git branch --track <baseBranch> origin/<baseBranch>` para que `git worktree add` la pueda usar de base. La alternativa es pasar `origin/<baseBranch>` directamente al worktree add.
    g. Si algún paso falla, detente y reporta el error.
 
-5. Crea el worktree apuntando a la rama del issue, anclado en `<baseBranch>` actualizado:
+6. Crea el worktree apuntando a la rama del issue, anclado en `<baseBranch>` actualizado:
    Ejecuta:
      git worktree add .trees/<branchName> -b <branchName> <baseBranch>
    (donde `<baseBranch>` puede ser el nombre local o `origin/<baseBranch>` si la local no existe todavía).
@@ -38,7 +40,7 @@ A diferencia de /linear-task y /linear-branch, este skill NO modifica la rama ac
    - Si el directorio `.trees/` no existe, `git worktree add` lo crea automáticamente — no hace falta crearlo antes.
    - Si ya existe un worktree en esa ruta (porque volvés a correr el skill con el mismo branch), `git worktree add` falla con "already exists". En ese caso, listá los worktrees existentes con `git worktree list` y sugerí al usuario removerlo (`git worktree remove .trees/<branchName>`) o elegir otra rama.
 
-6. Cambiá al worktree nuevo (la tool de Bash mantiene el `cd` entre llamadas de la misma sesión, así que las próximas invocaciones corren sobre el worktree nuevo):
+7. Cambiá al worktree nuevo (la tool de Bash mantiene el `cd` entre llamadas de la misma sesión, así que las próximas invocaciones corren sobre el worktree nuevo):
    Ejecutá en una sola llamada a Bash:
      cd .trees/<branchName> && pwd && git branch --show-current && git status --short
    Verificá que el output muestre:
@@ -50,7 +52,7 @@ A diferencia de /linear-task y /linear-branch, este skill NO modifica la rama ac
 
    Nota: si el usuario sale y vuelve en otra sesión, el `cd` se pierde. En ese caso tendrá que correr `cd .trees/<branchName>` manualmente antes de seguir.
 
-7. Imprime resumen:
+8. Imprime resumen:
    - Issue de Linear: <identifier> — <title>
    - Estado: <state.name>
    - URL: <url>
