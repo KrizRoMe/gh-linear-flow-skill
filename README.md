@@ -22,7 +22,7 @@ Nothing is hardcoded: everything is asked through chat and saved to `~/.claude/g
 - **`/setup`** (recommended): configures everything in one go the first time. If you already have everything configured, it lets you change a single value (`/setup baseBranch`) without touching the rest.
 - **Lazy**: without running `/setup`, any other skill asks for whatever it's missing the first time you use it.
 
-Related repos (`relatedRepos`, used by `/pr-notify` and `/ship`) are saved per repo and in both directions: linking `repo-web` to `repo-api` automatically links `repo-api` back to `repo-web`.
+Related repos (`relatedRepos`, used by `/pr-notify`, `/ship` and `/dev-line`) are saved per repo and in both directions: linking `repo-web` to `repo-api` automatically links `repo-api` back to `repo-web`.
 
 Full schema and how to reconfigure a single key: [resources/config.md](resources/config.md).
 
@@ -40,6 +40,7 @@ Full schema and how to reconfigure a single key: [resources/config.md](resources
 | `/prdesc` | Generates only the PR description (preview, no PR created) | — |
 | `/pr-notify` | Finds the PRs for the current issue and builds the notification message | `[optional-identifier]` |
 | `/my-issues` | Lists your pending Linear issues | — |
+| `/dev-line` | Builds the weekly LÍNEA DE DESARROLLO report from your PRs, commits, Linear issues and docs | `[line-name]`, `--last-week`, `--since` |
 | `/ship` | Chains autocommit → pr → pr-notify in one go | `--message`, `--title`, `--body-file`, `--dry-run`, `--no-notify` |
 
 All of them have `disable-model-invocation: true` — they never trigger on their own, you always call them with `/name`.
@@ -47,6 +48,14 @@ All of them have `disable-model-invocation: true` — they never trigger on thei
 ### `/ship`
 
 A shortcut for the end of the workflow (commit + PR + notify), not a replacement for the separate skills. It does NOT merge or touch Linear states. The model can hallucinate the title/description — use `--message`/`--title`/`--body-file` to force literal values, or fix it afterward with `gh pr edit`.
+
+### `/dev-line`
+
+Builds the weekly status report for non-technical stakeholders: what changed, what's next (with dates), status, blockers. It scans the current repo **and its `relatedRepos`** for PRs you created or merged and commits you authored or co-authored during the week, takes the upcoming work from Linear (falling back to dates found in `TODO.md` / `ROADMAP.md` / `odd/tasks/*.md` when an issue has none), and writes everything in plain business language — no repo names, no PR numbers, no jargon.
+
+The line name defaults to the one configured for the current repo, or you can pass it inline: `/dev-line Blaster contact-center` — passing it also narrows the report to that module's PRs, commits and issues only. The line name, its Linear project and the owner live in `devLine` and are shared across related repos, so configuring it once in `repo-web` also covers `repo-api`. Setting the Linear project is what makes the per-line filter precise: a PR named "add contact upload endpoint" never mentions the line, but its issue does belong to the project. Reports are saved under `~/.claude/gh-linear-flow/dev-line/` so the next run can detect dates that moved.
+
+Read-only: it never touches Linear, GitHub or your working tree.
 
 ### Worktrees (`/linear-worktree-task`, `/linear-worktree-branch`)
 

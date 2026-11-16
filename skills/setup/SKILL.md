@@ -17,11 +17,12 @@ Ejecuta este flujo con cuidado. Este skill NUNCA crea ni modifica nada en Linear
    c. `baseBranch`
    d. `contentLanguage`
    e. Si hay <repoActual>: si `relatedRepos[<repoActual>]` no existe todavía en el archivo.
+   f. Si hay <repoActual>: si `devLine.owner` o `devLine.lines[<repoActual>]` no existen todavía en el archivo.
 
 4. Si vino un argumento ($ARGUMENTS, ej. "baseBranch", "idioma", "repos relacionados", "equipo", "email"), interpretalo como la(s) clave(s) que quiero cambiar puntualmente: tratalas como "faltantes" para los pasos siguientes (aunque ya tengan valor en el archivo) y saltá directo al paso 6 preguntando solo por esas, sin tocar el resto.
 
 5. Si NO vino argumento:
-   a. Si nada falta (ver paso 3), avisa que la config ya está completa, muestra un resumen legible (email, equipo, rama base, idioma, repos relacionados del repo actual — sin exponer uuids crudos) y preguntame si quiero modificar algo puntual (dando el nombre del dato, ej. "cambiá la rama base a main") o si está todo bien así. Si respondo que no quiero cambiar nada, termina ahí sin escribir el archivo.
+   a. Si nada falta (ver paso 3), avisa que la config ya está completa, muestra un resumen legible (email, equipo, rama base, idioma, repos relacionados del repo actual, línea y responsable — sin exponer uuids crudos) y preguntame si quiero modificar algo puntual (dando el nombre del dato, ej. "cambiá la rama base a main") o si está todo bien así. Si respondo que no quiero cambiar nada, termina ahí sin escribir el archivo.
    b. Si respondo que sí quiero cambiar algo, tratá esa(s) clave(s) igual que en el paso 4 (como "faltantes") y seguí al paso 6 preguntando solo por esas.
    c. Si falta algo (primera configuración), pregúntamelo TODO de una sola vez, en una sola tanda agrupada (no esperes confirmaciones intermedias entre preguntas), solo por lo que falte:
       - Correo de Linear (si falta `linearEmail`).
@@ -29,6 +30,7 @@ Ejecuta este flujo con cuidado. Este skill NUNCA crea ni modifica nada en Linear
       - Rama base — aclará que el default es "develop" si no respondo (si falta `baseBranch`).
       - Idioma del contenido generado (issues, PRs, resúmenes) — aclará que el default es inglés si no respondo (si falta `contentLanguage`).
       - Repos de GitHub relacionados con <repoActual> (ej. el repo del backend si este es el del frontend de un mismo feature) — aclará que puede responder "ninguno" (solo si hay <repoActual> y `relatedRepos[<repoActual>]` no existe).
+      - Nombre de la LÍNEA de desarrollo de <repoActual>, el proyecto de Linear que le corresponde (opcional, pero es lo que hace preciso el filtro de `/dev-line`) y el nombre del responsable, para el reporte semanal de `/dev-line` (ej. línea "Blaster contact-center", proyecto "Blaster", responsable "Cristopher Romero") — aclará que puede responder "ninguna" si no usa ese reporte (solo si falta `devLine` según el paso 3f).
 
 En todos los casos, pregunta SOLO por las claves identificadas como faltantes o a cambiar en este paso — nunca reconfirmes claves que ya estaban bien y no fueron pedidas.
 
@@ -36,7 +38,8 @@ En todos los casos, pregunta SOLO por las claves identificadas como faltantes o 
    - `linearUserId`: usa `list_users` con el `linearEmail` dado. Si no hay coincidencia exacta, muéstrame las opciones encontradas y pregunta cuál es.
    - `linearTeamId` / `linearTeamUrl`: usa `list_teams` para encontrar el equipo por nombre/key, y `get_team` para su url real. Si no hay coincidencia exacta, muéstrame las opciones y pregunta.
    - `relatedRepos`: normaliza cada repo dado al formato `org/repo`. Guarda `relatedRepos[<repoActual>]` con esos repos (o `[]` si respondí "ninguno"). Por cada repo listado, agrega también `<repoActual>` a su propia lista `relatedRepos[<ese repo>]` (creando la entrada si no existía) — la relación siempre se guarda en ambos sentidos.
+   - `devLine`: guarda `devLine.owner` con el responsable y `devLine.lines[<repoActual>] = { "line": <nombre de la línea>, "linearProject": <nombre del proyecto o null> }`. Si el usuario dio un proyecto, verifícalo con `list_projects` antes de guardarlo; si no hay coincidencia exacta, muéstrame las opciones y pregunta. Escribe esa misma entrada para cada repo relacionado que todavía no tenga una propia — la línea se comparte entre repos relacionados, igual que la relación. Nunca pises el nombre de línea ya guardado de otro repo.
 
 7. Actualiza `~/.claude/gh-linear-flow.config.json` con Write, combinando las claves nuevas/cambiadas con las que ya existían — nunca borres claves ni entradas de `relatedRepos` de otros repos que no pediste cambiar. Si estabas reconfigurando una clave puntual (pasos 4 o 5b), solo esa clave cambia de valor; el resto queda intacto. Crea `~/.claude/` si no existe.
 
-8. Muestra un resumen final de la config guardada (email, equipo, rama base, idioma, repos relacionados del repo actual — sin uuids crudos) y cierra con: "Listo. Ya podés usar /linear-task, /pr-notify, /ship, etc. sin que te vuelvan a preguntar esto."
+8. Muestra un resumen final de la config guardada (email, equipo, rama base, idioma, repos relacionados del repo actual, línea y responsable — sin uuids crudos) y cierra con: "Listo. Ya podés usar /linear-task, /pr-notify, /ship, etc. sin que te vuelvan a preguntar esto."

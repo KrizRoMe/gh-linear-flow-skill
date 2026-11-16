@@ -18,13 +18,21 @@ Todos los skills de este repo comparten un único archivo de configuración loca
     "org/repo1": ["org/repo2"],
     "org/repo2": ["org/repo1"]
   },
-  "contentLanguage": "en"
+  "contentLanguage": "en",
+  "devLine": {
+    "owner": "Nombre del responsable",
+    "lines": {
+      "org/repo1": { "line": "Blaster contact-center", "linearProject": "Blaster" }
+    }
+  }
 }
 ```
 
 Ningún skill necesita todas las claves — cada `SKILL.md` indica cuáles requiere en su paso 0.
 
 `relatedRepos` mapea cada repo de GitHub (formato `org/repo`) a la lista de otros repos relacionados con él (donde se buscan PRs de un mismo issue de Linear, ej. api + web de un mismo feature). La relación es siempre bidireccional: si `repo-web` lista a `repo-api`, `repo-api` también debe listar a `repo-web`, aunque nunca se haya configurado pr-notify/ship parado en `repo-api` todavía.
+
+`devLine` guarda los datos del reporte semanal de `/dev-line`: `owner` es el responsable que firma el reporte, y `lines` mapea cada repo de GitHub a su LÍNEA de desarrollo: `line` es el nombre que va en el reporte y `linearProject` (opcional) es el proyecto de Linear que acota la actividad a esa línea — sin él, el filtro cae a coincidencia por palabras clave, que es menos preciso. Una entrada guardada como string suelto equivale a `{ "line": <ese string>, "linearProject": null }`. Los repos relacionados comparten línea: al guardar la línea de un repo, se escribe la misma para cada repo de su `relatedRepos` que no tenga una propia (sin pisar las ya guardadas).
 
 `contentLanguage` es el idioma en el que se redacta TODO el contenido generado por IA en la suite: título/descripción de issues de Linear, título/descripción de PRs, y resúmenes generados (ej. `/daily-resume`). No afecta las etiquetas propias de cada skill (nombres de columnas, headers de bloque, mensajes fijos como "Operación cancelada"), solo el contenido redactado a partir de lo que el usuario pide. Acepta cualquier idioma que el usuario indique (ej. `"es"`, `"pt"`, `"fr"`).
 
