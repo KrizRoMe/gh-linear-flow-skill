@@ -43,7 +43,7 @@ a. **PRs tuyos creados o mergeados en la ventana**:
 
 b. **Commits de los PRs encontrados** — esta es la fuente principal, no la de abajo. `repos/<repo>/commits` solo recorre la rama por defecto, así que el trabajo que todavía vive en una rama sin mergear NO aparece ahí. Por eso, por cada PR del paso a:
    `gh pr view <n> --repo <repo> --json commits,headRefName --jq '.commits[] | {sha: .oid[0:7], msg: (.messageHeadline), authors: [.authors[].login], date: .committedDate}'`
-   Quédate con los commits dentro de la ventana donde figures como autor o co-autor (los de Claude siguen teniendo tu autoría y el `Co-Authored-By` debajo, y GitHub devuelve ambos en `authors`).
+   Quédate con los commits dentro de la ventana donde figures como autor o co-autor (GitHub devuelve autor y co-autores en `authors`).
 
 c. **Commits en la rama base** (lo que ya se mergeó y commits directos):
    `gh api "repos/<repo>/commits?author=<login>&since=<desdeISO>&until=<hastaISO>" --jq '.[] | {sha: .sha[0:7], msg: (.commit.message | split("\n")[0]), date: .commit.author.date}'`

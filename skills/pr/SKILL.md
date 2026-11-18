@@ -42,6 +42,7 @@ Reglas:
 - Sin bloques de código markdown envolviendo el output
 - Formato amigable para reviewers
 - Incluye el issue como link markdown: [IDENTIFIER — Title](url)
+- Sin atribución a IA: nada de "Generated with Claude Code", firmas o emojis de bot, ni menciones a Claude, Anthropic o cualquier herramienta de IA
 
 8. Reemplaza completamente el archivo `.github/generated-pr.md` con la descripción generada.
 

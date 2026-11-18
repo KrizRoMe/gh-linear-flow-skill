@@ -5,7 +5,7 @@ disable-model-invocation: true
 argument-hint: "[--message \"<msg>\"] [--title \"<title>\"] [--body-file <path>] [--dry-run] [--no-notify]"
 ---
 
-Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en Linear. NO hagas merge del PR. NO transiciones estados del issue. Este skill encadena lo que ya hacen las skills separadas — no expande scope.
+Ejecuta este flujo con cuidado. NUNCA uses operaciones de eliminar/archivar en Linear. NO hagas merge del PR. NO transiciones estados del issue. Este skill encadena lo que ya hacen las skills separadas — no expande scope. NUNCA agregues atribución a IA: ni trailers `Co-Authored-By` ni firmas tipo "Generated with Claude Code" ni menciones a Claude, Anthropic o cualquier IA, ni en el mensaje de commit ni en la descripción del PR.
 
 Flags opcionales (evalúalas en este orden, todas son opt-in):
 - `--dry-run`: solo imprime qué haría. No commitea, no pushea, no crea PR, no arma notify.

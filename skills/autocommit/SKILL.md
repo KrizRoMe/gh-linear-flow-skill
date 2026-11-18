@@ -31,6 +31,7 @@ Reglas:
 - Sin emojis
 - Sin punto final
 - Formato estricto: `<tipo>: <descripción corta>`
+- Sin atribución a IA: nunca agregues trailers `Co-Authored-By`, firmas tipo "Generated with", ni menciones a Claude, Anthropic o cualquier IA
 
 Ejemplos:
 - feat: add multi-session whatsapp manager
